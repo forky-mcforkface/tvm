@@ -40,6 +40,9 @@ RUN bash /install/ubuntu_install_python_package.sh
 COPY install/ubuntu1804_install_llvm.sh /install/ubuntu1804_install_llvm.sh
 RUN bash /install/ubuntu1804_install_llvm.sh
 
+COPY install/ubuntu_install_cmake_source.sh /install/ubuntu_install_cmake_source.sh
+RUN bash /install/ubuntu_install_cmake_source.sh
+
 COPY install/ubuntu_install_dnnl.sh /install/ubuntu_install_dnnl.sh
 RUN bash /install/ubuntu_install_dnnl.sh
 
@@ -136,3 +139,7 @@ ENV PATH /opt/sccache:$PATH
 # Libxsmm deps
 COPY install/ubuntu_install_libxsmm.sh /install
 RUN bash /install/ubuntu_install_libxsmm.sh
+
+# Hacky workaround (do not push to GitHub) to install the right Numpy version
+# just a new comment
+RUN pip install numpy --upgrade

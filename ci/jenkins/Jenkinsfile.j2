@@ -51,16 +51,16 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
 {% import 'ci/jenkins/macros.j2' as m with context -%}
 
 // NOTE: these lines are scanned by docker/dev_common.sh. Please update the regex as needed. -->
-ci_lint = 'tlcpack/ci-lint:20220810-060142-fae79bbc3'
-ci_gpu = 'tlcpack/ci-gpu:20220810-060142-fae79bbc3'
-ci_cpu = 'tlcpack/ci-cpu:20220810-060142-fae79bbc3'
-ci_minimal = 'tlcpack/ci-minimal:20220725-133226-d3cefdaf1'
-ci_wasm = 'tlcpack/ci-wasm:20220810-060142-fae79bbc3'
-ci_i386 = 'tlcpack/ci-i386:20220810-060142-fae79bbc3'
-ci_cortexm = 'tlcpack/ci-cortexm:20220810-060142-fae79bbc3'
-ci_arm = 'tlcpack/ci-arm:20220810-060142-fae79bbc3'
-ci_hexagon = 'tlcpack/ci-hexagon:20220825-145056-fb7cf97f'
-ci_riscv = 'tlcpack/ci-riscv:20220810-060142-fae79bbc3'
+ci_lint = 'tlcpackstaging/ci_lint:20220822-105603-52f5c155f'
+ci_gpu = 'tlcpackstaging/ci_gpu:20220822-105603-52f5c155f'
+ci_cpu = 'tlcpackstaging/ci_cpu:20220822-105603-52f5c155f'
+ci_minimal = 'tlcpackstaging/ci_minimal:20220822-105603-52f5c155f'
+ci_wasm = 'tlcpackstaging/ci_wasm:20220822-105603-52f5c155f'
+ci_i386 = 'tlcpackstaging/ci_i386:20220822-105603-52f5c155f'
+ci_cortexm = 'tlcpackstaging/ci_cortexm:20220822-105603-52f5c155f'
+ci_arm = 'tlcpackstaging/ci_arm:20220822-105603-52f5c155f'
+ci_hexagon = 'tlcpackstaging/ci_hexagon:20220822-105603-52f5c155f'
+ci_riscv = 'tlcpackstaging/ci_riscv:20220822-105603-52f5c155f'
 // <--- End of regex-scanned config.
 
 // Parameters to allow overriding (in Jenkins UI), the images

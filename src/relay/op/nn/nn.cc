@@ -35,12 +35,15 @@
 #include <tvm/topi/nn/softmax.h>
 
 #include <algorithm>
+#include <limits>
+#include <numeric>
 #include <string>
 #include <vector>
 
 #include "../../transforms/infer_layout_utils.h"
 #include "../make_op.h"
 #include "../op_common.h"
+#include "../tensor/reduce.h"
 #include "../type_relations.h"
 
 namespace tvm {
@@ -976,6 +979,22 @@ Expr MakeLayerNorm(Expr data, Expr gamma, Expr beta, int axis, double epsilon, b
 
 TVM_REGISTER_GLOBAL("relay.op.nn._make.layer_norm").set_body_typed(MakeLayerNorm);
 
+Array<te::Tensor> LayerNormCompute(const Attrs& attrs, const Array<te::Tensor>& inputs,
+                                   const Type& out_type) {
+  IndexExpr count = tir::make_const(inputs[0]->dtype, 1);
+  const ReduceAttrs* param = attrs.as<ReduceAttrs>();
+  ICHECK(param != nullptr);
+  auto axes = param->axis;
+  for (int64_t i : GetReduceAxes(inputs[0]->shape.size(), param->axis, param->exclude)) {
+    count *= inputs[0]->shape[i];
+  }
+  // Although count is created as inputs[0]->dtype,
+  // its type may be changed (promoted) during multiplication
+  count = cast(inputs[0]->dtype, count);
+  auto res = ReduceCompute(attrs, inputs, out_type, topi::sum);
+  return {topi::divide(res[0], count)};
+}
+
 RELAY_REGISTER_OP("nn.layer_norm")
     .describe(R"code(
 )code" TVM_ADD_FILELINE)
@@ -986,6 +1005,8 @@ RELAY_REGISTER_OP("nn.layer_norm")
     .add_argument("beta", "Tensor", "The beta offset factor.")
     .set_attr<FInferCorrectLayout>("FInferCorrectLayout",
                                    NormalizationInferCorrectLayout<LayerNormAttrs>)
+    .set_attr<TOpPattern>("TOpPattern", kElemWise)
+    .set_attr<FTVMCompute>("FTVMCompute", LayerNormCompute)
     .set_support_level(1)
     .add_type_rel("LayerNorm", LayerNormRel);
 

@@ -115,6 +115,7 @@ Expr GroupNormToInferUnpack(const Attrs attrs, Expr data, Expr gamma, Expr beta,
   return out;
 }
 
+/*
 Expr LayerNormToInferUnpack(const Attrs attrs, Expr data, Expr gamma, Expr beta, Type tdata) {
   auto ttype = tdata.as<TensorTypeNode>();
   ICHECK(ttype);
@@ -137,6 +138,7 @@ Expr LayerNormToInferUnpack(const Attrs attrs, Expr data, Expr gamma, Expr beta,
   }
   return out;
 }
+*/
 
 Expr InstanceNormToInferUnpack(const Attrs attrs, Expr data, Expr gamma, Expr beta, Type tdata) {
   auto ttype = tdata.as<TensorTypeNode>();
@@ -184,7 +186,7 @@ class InferenceSimplifier : public MixedModeMutator {
       : batch_norm_op_(Op::Get("nn.batch_norm")),
         dropout_op_(Op::Get("nn.dropout")),
         instance_norm_op_(Op::Get("nn.instance_norm")),
-        layer_norm_op_(Op::Get("nn.layer_norm")),
+        // layer_norm_op_(Op::Get("nn.layer_norm")),
         group_norm_op_(Op::Get("nn.group_norm")),
         l2_norm_op_(Op::Get("nn.l2_normalize")) {}
 
@@ -207,10 +209,6 @@ class InferenceSimplifier : public MixedModeMutator {
   Expr Rewrite_(const CallNode* n, const Expr& new_n) {
     if (n->op == batch_norm_op_) {
       ty_map_[new_n.as<CallNode>()->args[0]] = n->args[0]->checked_type();
-    } else if (n->op == layer_norm_op_) {
-      const auto* call = new_n.as<CallNode>();
-      return LayerNormToInferUnpack(call->attrs, call->args[0], call->args[1], call->args[2],
-                                    n->args[0]->checked_type());
     } else if (n->op == group_norm_op_) {
       const auto* call = new_n.as<CallNode>();
       return GroupNormToInferUnpack(call->attrs, call->args[0], call->args[1], call->args[2],
@@ -233,7 +231,6 @@ class InferenceSimplifier : public MixedModeMutator {
   const Op& batch_norm_op_;
   const Op& dropout_op_;
   const Op& instance_norm_op_;
-  const Op& layer_norm_op_;
   const Op& group_norm_op_;
   const Op& l2_norm_op_;
   std::unordered_map<Expr, Type, ObjectPtrHash, ObjectPtrEqual> ty_map_;

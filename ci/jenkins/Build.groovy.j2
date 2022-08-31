@@ -273,7 +273,6 @@ stage('Build') {
           )
           make(ci_riscv, 'build-csinn2-x86', '-j2')
           make(ci_riscv, 'build-csinn2-c906', 'tvm_rpc -j2')
-          {{ m.upload_artifacts(tag='riscv-csinn2', filenames=tvm_lib, folders=microtvm_template_projects) }}
         }
       }
      } else {

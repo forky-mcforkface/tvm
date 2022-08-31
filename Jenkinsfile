@@ -1259,47 +1259,12 @@ stage('Build') {
           docker_init(ci_riscv)
           init_git()
           sh (
-            script: "${docker_run} ${ci_riscv} ./tests/scripts/task_config_build_csinn2.sh build-csinn2-x86",
-            label: 'Create CSINN2 x86 cmake config',
-            script: "${docker_run} ${ci_riscv} ./tests/scripts/task_config_build_c906.sh build-csinn2-c906",
-            label: 'Create CSINN2 c906 cmake config',
+            script: "${docker_run} ${ci_riscv} ./tests/scripts/task_config_build_csinn2.sh build-csinn2-x86 &&
+                     ${docker_run} ${ci_riscv} ./tests/scripts/task_config_build_c906.sh build-csinn2-c906",
+            label: 'Create CSINN2 x86 and c906 cmake config',
           )
           make(ci_riscv, 'build-csinn2-x86', '-j2')
           make(ci_riscv, 'build-csinn2-c906', 'tvm_rpc -j2')
-          sh(
-            script: """
-              set -eux
-              retry() {
-                local max_retries=\$1
-                shift
-                local n=0
-                local backoff_max=30
-                until [ "\$n" -ge \$max_retries ]
-                do
-                    "\$@" && break
-                    n=\$((n+1))
-                    if [ "\$n" -eq \$max_retries ]; then
-                        echo "failed to update after attempt \$n / \$max_retries, giving up"
-                        exit 1
-                    fi
-
-                    WAIT=\$(python3 -c 'import random; print(random.randint(10, 30))')
-                    echo "failed to update \$n / \$max_retries, waiting \$WAIT to try again"
-                    sleep \$WAIT
-                done
-              }
-
-              md5sum build/libtvm.so
-              retry 3 aws s3 cp --no-progress build/libtvm.so s3://${s3_prefix}/riscv-csinn2/build/libtvm.so
-              md5sum build/libtvm_runtime.so
-              retry 3 aws s3 cp --no-progress build/libtvm_runtime.so s3://${s3_prefix}/riscv-csinn2/build/libtvm_runtime.so
-              md5sum build/config.cmake
-              retry 3 aws s3 cp --no-progress build/config.cmake s3://${s3_prefix}/riscv-csinn2/build/config.cmake
-              retry 3 aws s3 cp --no-progress build/microtvm_template_projects s3://${s3_prefix}/riscv-csinn2/build/microtvm_template_projects --recursive
-            """,
-            label: 'Upload artifacts to S3',
-          )
-
         }
       }
      } else {

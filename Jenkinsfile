@@ -45,7 +45,7 @@
 // 'python3 jenkins/generate.py'
 // Note: This timestamp is here to ensure that updates to the Jenkinsfile are
 // always rebased on main before merging:
-// Generated at 2022-08-31T10:03:05.681701
+// Generated at 2022-09-05T20:35:04.661727
 
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
 // NOTE: these lines are scanned by docker/dev_common.sh. Please update the regex as needed. -->
@@ -1259,11 +1259,14 @@ stage('Build') {
           docker_init(ci_riscv)
           init_git()
           sh (
-            script: "${docker_run} ${ci_riscv} ./tests/scripts/task_config_build_csinn2.sh build-csinn2-x86 &&
-                     ${docker_run} ${ci_riscv} ./tests/scripts/task_config_build_c906.sh build-csinn2-c906",
-            label: 'Create CSINN2 x86 and c906 cmake config',
+            script: "${docker_run} ${ci_riscv} ./tests/scripts/task_config_build_csinn2.sh build-csinn2-x86",
+            label: 'Create CSINN2 x86 cmake config',
           )
           make(ci_riscv, 'build-csinn2-x86', '-j2')
+          sh (
+            script: "${docker_run} ${ci_riscv} ./tests/scripts/task_config_build_c906.sh build-csinn2-c906",
+            label: 'Create CSINN2 c906 cmake config',
+          )
           make(ci_riscv, 'build-csinn2-c906', 'tvm_rpc -j2')
         }
       }

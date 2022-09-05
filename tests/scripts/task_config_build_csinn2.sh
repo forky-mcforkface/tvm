@@ -26,5 +26,3 @@ cp ../cmake/config.cmake .
 echo set\(USE_RPC ON\) >> config.cmake
 echo set\(USE_LLVM llvm-config-10\) >> config.cmake
 echo set\(USE_OPENMP gnu\) >> config.cmake
-# echo set\(USE_CSINN "/opt/csi-nn2"\) >> config.cmake
-# echo set\(USE_CSINN_DEVICE_RUNTIME X86\) >> config.cmake

@@ -25,5 +25,3 @@ cp ../cmake/config.cmake .
 
 echo set\(USE_CPP_RPC ON\) >> config.cmake
 echo set\(USE_LIBBACKTRACE OFF\) >> config.cmake
-# echo set\(USE_CSINN "/opt/csi-nn2"\) >> config.cmake
-# echo set\(USE_CSINN_DEVICE_RUNTIME C906\) >> config.cmake
